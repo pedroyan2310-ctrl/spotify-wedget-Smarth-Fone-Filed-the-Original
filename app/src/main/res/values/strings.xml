@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Compasso</string>
+
+    <string name="onboarding_title">Compasso</string>
+    <string name="onboarding_subtitle">Uma bolha flutuante que mostra, em qualquer tela, a música que está tocando no seu celular — Spotify, YouTube Music, qualquer player. Sem login, sem conta Premium.</string>
+
+    <string name="perm_notification_title">1. Acesso a notificações</string>
+    <string name="perm_notification_desc">É assim que o app descobre, sozinho, o que está tocando — a mesma informação que aparece nos seus controles de mídia.</string>
+    <string name="perm_notification_granted">Ativado</string>
+    <string name="perm_notification_action">Ativar</string>
+
+    <string name="perm_overlay_title">2. Exibir sobre outros apps</string>
+    <string name="perm_overlay_desc">É o que permite a bolha flutuar por cima de qualquer tela, independente do que você estiver usando.</string>
+    <string name="perm_overlay_granted">Ativado</string>
+    <string name="perm_overlay_action">Ativar</string>
+
+    <string name="start_widget">Ativar a bolha flutuante</string>
+    <string name="stop_widget">Desativar a bolha</string>
+    <string name="widget_running">A bolha está ativa. Toque nela pra ver os controles.</string>
+
+    <string name="notification_channel_name">Compasso ativo</string>
+    <string name="notification_text">Mostrando a música tocando agora</string>
+    <string name="notification_stop_action">Parar</string>
+
+    <string name="lyrics_searching">Procurando letra…</string>
+    <string name="lyrics_not_found">Letra não encontrada</string>
+</resources>

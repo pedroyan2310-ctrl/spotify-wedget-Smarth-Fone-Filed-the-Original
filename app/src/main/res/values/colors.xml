@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base neutra bem escura (preto quase puro, no espirito do Spotify) +
+         um unico gradiente de assinatura (roxo -> ciano) como toque proprio,
+         em vez do verde do Spotify. -->
+    <color name="bg_deep">#0D0D0F</color>
+    <color name="bg_surface">#181818</color>
+    <color name="bg_surface_light">#282828</color>
+
+    <color name="accent_violet">#B388FF</color>
+    <color name="accent_cyan">#00E5C7</color>
+
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B3B3B3</color>
+
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+
+    <color name="progress_track">#363636</color>
+    <color name="card_stroke">#2A2A2A</color>
+    <color name="scrim">#B3000000</color>
+</resources>

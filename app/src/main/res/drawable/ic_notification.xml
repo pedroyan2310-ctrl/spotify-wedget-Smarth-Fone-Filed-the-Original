@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icone da notificacao persistente do servico. O sistema (API 21+) forca esse
+     desenho pra silhueta branca na barra de status, entao a cor aqui nao importa muito,
+     mas precisa ser solida e simples. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M12,2 A10,10 0 1,1 11.99,2 Z M9.5,7.5 v9 l7,-4.5 z" />
+</vector>

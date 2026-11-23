@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/overlayRoot"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <!-- Estado colapsado: a bolha (com particulas + aneis de pulso reagindo a reproducao) -->
+    <com.agoratocando.floatwidget.CircularNowPlayingView
+        android:id="@+id/bubbleView"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center" />
+
+    <!-- Estado expandido: cartao "vidro liquido" — capa borrada + aurora animada +
+         scrim (pra legibilidade) por baixo do conteudo (capa, titulo com brilho,
+         letra sincronizada, progresso e controles). android:background entra so
+         como base/contorno; clipToOutline arredonda todas as camadas de efeito
+         junto com o cartao. -->
+    <FrameLayout
+        android:id="@+id/expandedCard"
+        android:layout_width="288dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_expanded_card"
+        android:foreground="@drawable/bg_expanded_card_stroke"
+        android:clipToOutline="true"
+        android:visibility="gone">
+
+        <!-- Camada 1 (so Android 12+): a propria capa do album, borrada via
+             RenderEffect no codigo — o efeito "vidro liquido"/glass. Em aparelhos
+             mais antigos fica sempre invisivel (gone) e o cartao mostra so o
+             fundo escuro normal por baixo das camadas seguintes. -->
+        <ImageView
+            android:id="@+id/expandedBlurArt"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:contentDescription="@null" />
+
+        <!-- Camada 2: aurora animada, nas cores extraidas da capa (Palette) —
+             funciona em qualquer versao do Android, sem depender de GPU effects. -->
+        <com.agoratocando.floatwidget.AuroraView
+            android:id="@+id/expandedAurora"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Camada 3: escurece tudo que esta atras pra garantir que o texto
+             continue sempre legivel, nao importa a capa/aurora por baixo. -->
+        <View
+            android:id="@+id/expandedScrim"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/scrim" />
+
+        <!-- Camada 4: o conteudo de verdade, por cima de tudo. -->
+        <LinearLayout
+            android:id="@+id/expandedContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="14dp"
+            android:paddingTop="14dp"
+            android:paddingRight="14dp"
+            android:paddingBottom="14dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/expandedArt"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@color/bg_surface_light"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.AgoraTocando.Circle" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical">
+
+                    <!-- O brilho/shimmer que varre esse titulo e aplicado no codigo
+                         (troca o Shader do Paint do proprio TextView). -->
+                    <TextView
+                        android:id="@+id/expandedTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        tools:text="Nome da musica" />
+
+                    <TextView
+                        android:id="@+id/expandedArtist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        tools:text="Nome do artista" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/btnCollapse"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="4dp"
+                    android:padding="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_collapse" />
+            </LinearLayout>
+
+            <!-- Letra sincronizada: karaoke de 3 linhas (anterior / atual em destaque /
+                 proxima). Enquanto nao ha letra sincronizada, a linha central mostra um
+                 status ("Procurando...", "Letra nao encontrada" ou o texto corrido) e as
+                 outras duas ficam em branco — nunca fica um espaco vazio sem explicacao. -->
+            <LinearLayout
+                android:id="@+id/lyricsBlock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/lyricsPrev"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    android:alpha="0.55"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    tools:text="linha anterior da letra" />
+
+                <TextView
+                    android:id="@+id/lyricsCurrent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    tools:text="linha atual, em destaque" />
+
+                <TextView
+                    android:id="@+id/lyricsNext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    android:alpha="0.55"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    tools:text="proxima linha da letra" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/progressTrack"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_progress_track">
+
+                <View
+                    android:id="@+id/progressFill"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_progress_fill" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/btnPrev"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_prev" />
+
+                <FrameLayout
+                    android:id="@+id/btnPlayPauseContainer"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/bg_play_button"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/btnPlayPause"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_play" />
+                </FrameLayout>
+
+                <ImageButton
+                    android:id="@+id/btnNext"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_next" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</FrameLayout>

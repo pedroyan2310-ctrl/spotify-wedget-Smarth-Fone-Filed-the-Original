@@ -1,0 +1,42 @@
+name: Compilar APK
+
+# Compila um .apk de debug automaticamente sempre que o codigo for enviado
+# pro GitHub. Os servidores do GitHub (ao contrario do ambiente onde este
+# projeto foi escrito) tem acesso total a internet, entao conseguem baixar o
+# Android SDK e o Gradle e compilar o app de verdade.
+#
+# Depois que essa Action rodar (alguns minutos), o .apk fica disponivel em:
+# aba "Actions" deste repositorio -> o run mais recente -> "Artifacts" la embaixo
+# -> baixar "agora-tocando-debug-apk" (vem dentro de um .zip).
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Configurar o Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Compilar o APK de debug
+        run: gradle assembleDebug
+
+      - name: Publicar o APK gerado
+        uses: actions/upload-artifact@v4
+        with:
+          name: agora-tocando-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
